@@ -1,0 +1,130 @@
+.menu-container {
+  padding: 30px 20px;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.tiles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 600px) {
+  .tiles-grid {
+    grid-template-columns: 1fr 1fr;
+    max-width: 600px;
+  }
+}
+
+.menu-tile {
+  padding: 30px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  min-height: 160px;
+  justify-content: center;
+  background-color: white;
+}
+
+.menu-tile:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.lectures-tile {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.seminars-tile {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.hands-on-tile {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.share-tile {
+  background: linear-gradient(135deg, #ffa500 0%, #ff6b6b 100%);
+  color: white;
+}
+
+.tile-icon {
+  font-size: 48px;
+}
+
+.tile-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.tile-description {
+  font-size: 12px;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.btn-logout {
+  padding: 12px 30px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  width: 100%;
+  max-width: 200px;
+}
+
+.btn-logout:hover {
+  background-color: #d0d0d0;
+  border-color: #999;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 250px;
+}
+
+.btn-add-friend {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #00d084 0%, #00b366 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.btn-add-friend:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 208, 132, 0.3);
+}

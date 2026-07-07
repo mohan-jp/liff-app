@@ -1,0 +1,159 @@
+.qr-container {
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.qr-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qr-content h2 {
+  color: #00b900;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.qr-content p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+#qr-reader {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.divider {
+  text-align: center;
+  color: #999;
+  font-weight: bold;
+  margin: 20px 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00b900;
+  box-shadow: 0 0 0 3px rgba(0, 185, 0, 0.1);
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: #00b900;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #009500;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 185, 0, 0.3);
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 2px solid #999;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-success {
+  background-color: #00b900;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #009500;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 185, 0, 0.3);
+}
+
+.success-message {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #00b900 0%, #008000 100%);
+  color: white;
+  border-radius: 12px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.success-message h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.success-message p {
+  font-size: 16px;
+  margin: 5px 0;
+}

@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "name": "Test-LIFF-APP",
+  "env": {
+    "VITE_LIFF_ID": "@liff_id"
+  }
+}
