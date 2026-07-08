@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import '../styles/BottomNavigation.css'
 
-function BottomNavigation() {
+function BottomNavigation({ user }) {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -11,10 +11,21 @@ function BottomNavigation() {
     { path: '/hands-on', icon: '🛠️', label: 'Hands-On' },
   ]
 
+  // Optional: Show different menu items based on user category
+  const getMenuForRole = () => {
+    if (!user) return menuItems
+    
+    // All roles see the same menu for now
+    // In the future, you can customize per role:
+    // if (user.category === 'teacher') { return [...different items...] }
+    
+    return menuItems
+  }
+
   return (
     <div className="bottom-navigation">
       <div className="nav-items">
-        {menuItems.map((item) => (
+        {getMenuForRole().map((item) => (
           <div
             key={item.path}
             className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}

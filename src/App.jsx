@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } fro
 import LecturesList from './pages/LecturesList'
 import SeminarsList from './pages/SeminarsList'
 import HandsOnList from './pages/HandsOnList'
+import QRCodeGenerator from './pages/QRCodeGenerator'
 import BottomNavigation from './components/BottomNavigation'
 import './App.css'
 
@@ -85,14 +86,17 @@ function App() {
   useEffect(() => {
     // Get the page parameter from URL (?page=lectures, etc)
     const pageParam = searchParams.get('page')
+    const categoryParam = searchParams.get('category')
     console.log('Page parameter from URL:', pageParam)
+    console.log('Category parameter from URL:', categoryParam)
     setTargetPage(pageParam || 'lectures') // Default to lectures
     
-    initApp()
+    initApp(categoryParam)
   }, [])
 
-  const initApp = async () => {
+  const initApp = async (categoryParam) => {
     console.log('=== App.jsx initApp started ===')
+    console.log('Category parameter:', categoryParam)
     console.log('window.liff on start:', typeof window.liff)
     console.log('window.liffReady:', window.liffReady)
     console.log('User Agent:', navigator.userAgent)
@@ -127,14 +131,18 @@ function App() {
             console.log('LIFF Profile Data:', profile)
             console.log('Display Name from LIFF:', profile.displayName)
             console.log('User ID from LIFF:', profile.userId)
+            
             // Use LIFF profile data - ALWAYS fetch fresh from LIFF
             const userData = {
               userId: profile.userId,
               userName: profile.displayName,
               pictureUrl: profile.pictureUrl,
               statusMessage: profile.statusMessage,
+              category: categoryParam || 'student', // Default to 'student' if not specified
               registeredAt: new Date().toISOString(),
             }
+            console.log('User category:', userData.category)
+            
             setUser(userData)
             // Always overwrite with fresh data from LIFF
             localStorage.setItem('user', JSON.stringify(userData))
@@ -204,9 +212,10 @@ function App() {
         <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
         <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
         <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
+        <Route path="/qr-generator" element={<QRCodeGenerator />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      {user && <BottomNavigation />}
+      {user && <BottomNavigation user={user} />}
     </>
   )
 }

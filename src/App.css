@@ -34,6 +34,17 @@
   align-items: center;
   gap: 10px;
   justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.user-category {
+  font-weight: 700;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 3px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
 }
 
 .user-name {

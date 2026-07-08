@@ -35,6 +35,11 @@ function LecturesList({ user }) {
         <div className="header-content">
           <div className="header-title">📚 Lectures</div>
           <div className="header-user-info">
+            <div className="user-category">
+              {user.category === 'student' && '👨‍🎓 Student'}
+              {user.category === 'teacher' && '👨‍🏫 Teacher'}
+              {user.category === 'parent' && '👨‍👩‍👧 Parent'}
+            </div>
             <div className="user-name">{user.userName}</div>
             <div className="user-id">{user.userId}</div>
           </div>
