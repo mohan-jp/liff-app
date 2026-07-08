@@ -9,20 +9,28 @@ import './App.css'
 function NotAuthorized() {
   const [liffStatus, setLiffStatus] = useState('Checking...')
   const [userAgent, setUserAgent] = useState('')
+  const [sdkLoaded, setSdkLoaded] = useState(false)
 
   useEffect(() => {
     setUserAgent(navigator.userAgent)
     
     // Check LIFF status
-    try {
-      if (typeof window !== 'undefined' && window.liff) {
-        setLiffStatus('LIFF SDK available')
-      } else {
-        setLiffStatus('❌ LIFF SDK NOT available - Not accessed via LINE')
+    setTimeout(() => {
+      console.log('NotAuthorized component checking LIFF...')
+      try {
+        if (typeof window !== 'undefined' && typeof window.liff !== 'undefined') {
+          console.log('LIFF SDK is available in NotAuthorized')
+          setLiffStatus('✓ LIFF SDK available')
+          setSdkLoaded(true)
+        } else {
+          console.log('LIFF SDK NOT available in NotAuthorized')
+          setLiffStatus('❌ LIFF SDK NOT loaded - Make sure you are accessing via LINE app')
+          setSdkLoaded(false)
+        }
+      } catch (error) {
+        setLiffStatus('❌ Error checking LIFF: ' + error.message)
       }
-    } catch (error) {
-      setLiffStatus('❌ Error checking LIFF: ' + error.message)
-    }
+    }, 100)
   }, [])
 
   return (
@@ -43,18 +51,24 @@ function NotAuthorized() {
           This app is designed to be accessed through LINE. Please scan the QR code or click the link in LINE to access the app.
         </p>
         <p style={{ color: '#999', fontSize: '14px', marginTop: '30px' }}>
-          🔗 LIFF URL: https://liff.line.me/2010635214-xOPFLeJc
+          🔗 LIFF URL:<br/>
+          <code style={{ background: '#fff', padding: '10px', borderRadius: '4px', display: 'block', fontSize: '12px', marginTop: '10px', wordBreak: 'break-all' }}>
+            https://liff.line.me/2010635214-xOPFLeJc
+          </code>
         </p>
         <div style={{ marginTop: '30px', padding: '15px', background: '#fff', borderRadius: '8px', textAlign: 'left', fontSize: '12px', color: '#666' }}>
           <p><strong>Debug Info:</strong></p>
-          <p>Status: {liffStatus}</p>
-          <p>Platform: {userAgent.includes('iPhone') ? 'iOS' : userAgent.includes('Android') ? 'Android' : 'Desktop'}</p>
+          <p>LIFF Status: <strong style={{ color: sdkLoaded ? '#4caf50' : '#f44336' }}>{liffStatus}</strong></p>
+          <p>Platform: {userAgent.includes('iPhone') || userAgent.includes('iPad') ? '📱 iOS' : userAgent.includes('Android') ? '📱 Android' : '🖥️ Desktop/Browser'}</p>
+          <p>In LINE App: {userAgent.includes('Line') ? '✓ Yes' : '❌ No (Try opening in LINE app)'}</p>
           <p style={{ color: '#f44336', marginTop: '10px' }}>
-            <strong>If you're seeing this in LINE:</strong><br/>
-            1. Check DevTools (F12) Console for error messages<br/>
-            2. Make sure LIFF ID is correct<br/>
-            3. Try unfriend and refriend the bot<br/>
-            4. Clear browser cache
+            <strong>Troubleshooting:</strong><br/>
+            1. Make sure you opened the link <strong>IN LINE APP</strong><br/>
+            2. Not in browser - LINE's in-app browser only<br/>
+            3. Unfriend and refriend the bot<br/>
+            4. Clear LINE app cache<br/>
+            5. Check browser console (F12) for error details<br/>
+            6. Make sure you are logged into LINE
           </p>
         </div>
       </div>
@@ -71,20 +85,27 @@ function App() {
   }, [])
 
   const initApp = async () => {
+    console.log('initApp started')
+    console.log('window.liff on start:', typeof window.liff)
+    console.log('window object keys containing liff:', Object.keys(window).filter(k => k.toLowerCase().includes('liff')))
+    
     // Wait for LIFF SDK to load
     let retries = 0
-    while (typeof window.liff === 'undefined' && retries < 20) {
-      console.log('Waiting for LIFF SDK to load... (attempt ' + (retries + 1) + ')')
+    while (typeof window.liff === 'undefined' && retries < 30) {
+      console.log('Waiting for LIFF SDK to load... (attempt ' + (retries + 1) + '/30)')
       await new Promise(resolve => setTimeout(resolve, 100))
       retries++
     }
 
+    console.log('After waiting: window.liff is', typeof window.liff)
+    
     // Initialize LIFF if available
     try {
-      if (typeof window !== 'undefined' && window.liff) {
+      if (typeof window !== 'undefined' && typeof window.liff !== 'undefined') {
         console.log('LIFF SDK found after ' + retries + ' attempts')
         try {
           console.log('Initializing LIFF with ID: 2010635214-xOPFLeJc')
+          console.log('About to call window.liff.init()')
           await window.liff.init({ liffId: '2010635214-xOPFLeJc' })
           console.log('LIFF initialized successfully')
           console.log('Is LIFF logged in:', window.liff.isLoggedIn())
@@ -115,13 +136,15 @@ function App() {
         } catch (error) {
           console.error('LIFF init error:', error)
           console.error('Error message:', error.message)
-          console.error('Error stack:', error.stack)
+          console.error('Error name:', error.name)
+          console.error('Error code:', error.code)
           // Even in error, clear old cached data to prevent stale data
           localStorage.removeItem('user')
           setUser(null)
         }
       } else {
-        console.log('LIFF SDK not found even after waiting - not in LINE app')
+        console.log('LIFF SDK not found - window.liff is:', typeof window.liff)
+        console.log('This likely means you are NOT accessing via LINE app')
         // LIFF not available, clear cached data
         localStorage.removeItem('user')
         setUser(null)
