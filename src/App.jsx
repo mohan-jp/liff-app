@@ -96,11 +96,6 @@ function App() {
     localStorage.setItem('user', JSON.stringify(userData))
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('user')
-    setUser(null)
-  }
-
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f5f5f5' }}>
@@ -113,10 +108,10 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={user ? <Navigate to="/lectures" /> : <QRRegistration onRegister={handleRegistration} />} />
-        <Route path="/lectures" element={user ? <LecturesList user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-        <Route path="/seminars" element={user ? <SeminarsList user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-        <Route path="/hands-on" element={user ? <HandsOnList user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-        <Route path="/share-qr" element={user ? <ShareQRCode user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+        <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
+        <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
+        <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
+        <Route path="/share-qr" element={user ? <ShareQRCode user={user} /> : <Navigate to="/" />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {user && <BottomNavigation />}

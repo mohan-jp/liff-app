@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import QRCode from 'qrcode.react'
 import '../styles/ShareQRCode.css'
 
-function ShareQRCode({ user, onLogout }) {
+function ShareQRCode({ user }) {
   const navigate = useNavigate()
   const liffUrl = 'https://liff.line.me/2010635214-xOPFLeJc'
 
@@ -22,23 +22,14 @@ function ShareQRCode({ user, onLogout }) {
     alert('LIFF URL copied to clipboard!')
   }
 
-  const handleLogout = () => {
-    onLogout()
-  }
-
   return (
     <div className="app">
       <div className="header">
         <div className="header-content">
           <div className="header-title">📤 Share & Invite</div>
           <div className="header-user-info">
-            <div className="user-details">
-              <div className="user-name">{user.userName}</div>
-              <div className="user-id">ID: {user.userId}</div>
-            </div>
-            <button className="btn-logout" onClick={handleLogout} title="Logout">
-              🚪
-            </button>
+            <div className="user-name">{user.userName}</div>
+            <div className="user-id">{user.userId}</div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { mockApi } from '../services/mockApi'
 import '../styles/ContentList.css'
 
-function HandsOnList({ user, onLogout }) {
+function HandsOnList({ user }) {
   const navigate = useNavigate()
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
@@ -29,23 +29,14 @@ function HandsOnList({ user, onLogout }) {
     alert(`You have registered for hands-on session ID: ${sessionId}`)
   }
 
-  const handleLogout = () => {
-    onLogout()
-  }
-
   return (
     <div className="app">
       <div className="header">
         <div className="header-content">
           <div className="header-title">🛠️ Hands-On Sessions</div>
           <div className="header-user-info">
-            <div className="user-details">
-              <div className="user-name">{user.userName}</div>
-              <div className="user-id">ID: {user.userId}</div>
-            </div>
-            <button className="btn-logout" onClick={handleLogout} title="Logout">
-              🚪
-            </button>
+            <div className="user-name">{user.userName}</div>
+            <div className="user-id">{user.userId}</div>
           </div>
         </div>
       </div>
