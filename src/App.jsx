@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LecturesList from './pages/LecturesList'
 import SeminarsList from './pages/SeminarsList'
 import HandsOnList from './pages/HandsOnList'
-import ShareQRCode from './pages/ShareQRCode'
 import BottomNavigation from './components/BottomNavigation'
 import './App.css'
 
@@ -131,7 +130,6 @@ function App() {
         <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
         <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
         <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
-        <Route path="/share-qr" element={user ? <ShareQRCode user={user} /> : <Navigate to="/" />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {user && <BottomNavigation />}

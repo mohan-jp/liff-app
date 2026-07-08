@@ -9,7 +9,6 @@ function BottomNavigation() {
     { path: '/lectures', icon: '📚', label: 'Lectures' },
     { path: '/seminars', icon: '🎤', label: 'Seminars' },
     { path: '/hands-on', icon: '🛠️', label: 'Hands-On' },
-    { path: '/share-qr', icon: '📤', label: 'Share' },
   ]
 
   return (
