@@ -11,6 +11,7 @@ function QRRegistration({ onRegister }) {
   const [userName, setUserName] = useState('')
   const [email, setEmail] = useState('')
   const [liffAvailable, setLiffAvailable] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(true)
   const qrScannerRef = useRef(null)
   const [scanner, setScanner] = useState(null)
 
@@ -32,6 +33,19 @@ function QRRegistration({ onRegister }) {
             setUserName(profile.displayName || '')
             setEmail(profile.statusMessage || '')
             setLiffAvailable(true)
+            
+            // Auto-register with LIFF profile data
+            const userData = {
+              userId: profile.userId,
+              userName: profile.displayName,
+              email: profile.statusMessage || '',
+              registeredAt: new Date().toISOString(),
+              liffUser: true,
+            }
+            onRegister(userData)
+            setRegistered(true)
+            setIsInitializing(false)
+            return
           }
         } catch (error) {
           console.warn('LIFF init failed:', error.message)
@@ -40,6 +54,7 @@ function QRRegistration({ onRegister }) {
     } catch (error) {
       console.warn('LIFF not available:', error)
     }
+    setIsInitializing(false)
   }
 
   const startQRScanner = async () => {
@@ -126,12 +141,27 @@ function QRRegistration({ onRegister }) {
     }
   }, [scanner])
 
+  useEffect(() => {
+    // Auto-redirect when registered via LIFF
+    if (registered && liffAvailable) {
+      const timer = setTimeout(() => {
+        navigate('/lectures')
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [registered, liffAvailable, navigate])
+
   return (
     <div className="app">
       <div className="header">LINE LIFF App</div>
       
       <div className="qr-container">
-        {!registered ? (
+        {isInitializing ? (
+          <div className="loading-screen">
+            <div className="spinner"></div>
+            <p>Initializing with LINE...</p>
+          </div>
+        ) : !registered ? (
           <>
             <div className="qr-content">
               <h2>Welcome to LINE App</h2>
@@ -198,13 +228,15 @@ function QRRegistration({ onRegister }) {
             <h2>Registration Successful!</h2>
             <p>Welcome, {userName}!</p>
             <p>You are now ready to access the app.</p>
-            <button 
-              className="btn btn-primary" 
-              onClick={() => navigate('/lectures')}
-              style={{ marginTop: '20px' }}
-            >
-              Access App
-            </button>
+            {!liffAvailable && (
+              <button 
+                className="btn btn-primary" 
+                onClick={() => navigate('/lectures')}
+                style={{ marginTop: '20px' }}
+              >
+                Access App
+              </button>
+            )}
           </div>
         )}
       </div>
