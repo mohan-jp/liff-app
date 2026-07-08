@@ -198,14 +198,16 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={user ? <Navigate to={getRedirectPath()} /> : <NotAuthorized />} />
-      <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
-      <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
-      <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
-      <Route path="*" element={<Navigate to="/" />} />
+    <>
+      <Routes>
+        <Route path="/" element={user ? <Navigate to={getRedirectPath()} /> : <NotAuthorized />} />
+        <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
+        <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
+        <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
       {user && <BottomNavigation />}
-    </Routes>
+    </>
   )
 }
 
