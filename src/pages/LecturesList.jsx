@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { mockApi } from '../services/mockApi'
 import '../styles/ContentList.css'
 
-function LecturesList({ user }) {
+function LecturesList({ user, onLogout }) {
   const navigate = useNavigate()
   const [lectures, setLectures] = useState([])
   const [loading, setLoading] = useState(true)
@@ -29,18 +29,28 @@ function LecturesList({ user }) {
     alert(`You have registered for lecture ID: ${lectureId}`)
   }
 
+  const handleLogout = () => {
+    onLogout()
+  }
+
   return (
     <div className="app">
       <div className="header">
-        <div className="header-with-back">
-          <button className="back-button" onClick={() => navigate('/menu')}>
-            ←
-          </button>
-          <div>Lectures</div>
+        <div className="header-content">
+          <div className="header-title">📚 Lectures</div>
+          <div className="header-user-info">
+            <div className="user-details">
+              <div className="user-name">{user.userName}</div>
+              <div className="user-id">ID: {user.userId}</div>
+            </div>
+            <button className="btn-logout" onClick={handleLogout} title="Logout">
+              🚪
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="content-container">
+      <div className="content-container content-with-bottom-nav">
         {loading ? (
           <div className="loading">
             <div className="spinner"></div>

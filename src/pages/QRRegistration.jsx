@@ -10,8 +10,37 @@ function QRRegistration({ onRegister }) {
   const [userId, setUserId] = useState('')
   const [userName, setUserName] = useState('')
   const [email, setEmail] = useState('')
+  const [liffAvailable, setLiffAvailable] = useState(false)
   const qrScannerRef = useRef(null)
   const [scanner, setScanner] = useState(null)
+
+  useEffect(() => {
+    // Try to get user info from LIFF if available
+    initializeLIFF()
+  }, [])
+
+  const initializeLIFF = async () => {
+    try {
+      if (typeof window !== 'undefined' && window.liff) {
+        try {
+          await window.liff.init({ liffId: '2010635214-xOPFLeJc' })
+          
+          if (window.liff.isLoggedIn()) {
+            const profile = await window.liff.getProfile()
+            console.log('LIFF profile:', profile)
+            setUserId(profile.userId || '')
+            setUserName(profile.displayName || '')
+            setEmail(profile.statusMessage || '')
+            setLiffAvailable(true)
+          }
+        } catch (error) {
+          console.warn('LIFF init failed:', error.message)
+        }
+      }
+    } catch (error) {
+      console.warn('LIFF not available:', error)
+    }
+  }
 
   const startQRScanner = async () => {
     setScanning(true)
@@ -72,16 +101,17 @@ function QRRegistration({ onRegister }) {
   }
 
   const handleManualRegistration = () => {
-    if (!userId || !userName || !email) {
-      alert('Please fill in all fields')
+    if (!userId || !userName) {
+      alert('Please fill in User ID and Full Name at minimum')
       return
     }
 
     const userData = {
       userId,
       userName,
-      email,
+      email: email || 'user@example.com',
       registeredAt: new Date().toISOString(),
+      liffUser: liffAvailable,
     }
 
     onRegister(userData)
@@ -104,8 +134,8 @@ function QRRegistration({ onRegister }) {
         {!registered ? (
           <>
             <div className="qr-content">
-              <h2>QR Code Registration</h2>
-              <p>Scan the QR code below or enter your details manually</p>
+              <h2>Welcome to LINE App</h2>
+              <p>{liffAvailable ? 'Your LINE account information is pre-filled' : 'Please register with your details'}</p>
 
               {scanning && (
                 <>
@@ -167,13 +197,13 @@ function QRRegistration({ onRegister }) {
             <div className="success-icon">✓</div>
             <h2>Registration Successful!</h2>
             <p>Welcome, {userName}!</p>
-            <p>You are now registered as a friend.</p>
+            <p>You are now ready to access the app.</p>
             <button 
               className="btn btn-primary" 
-              onClick={() => navigate('/menu')}
+              onClick={() => navigate('/lectures')}
               style={{ marginTop: '20px' }}
             >
-              Continue to Menu
+              Access App
             </button>
           </div>
         )}

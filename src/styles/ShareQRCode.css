@@ -3,6 +3,10 @@
   min-height: calc(100vh - 60px);
 }
 
+.qr-share-container.content-with-bottom-nav {
+  padding-bottom: 80px;
+}
+
 .qr-section {
   background-color: white;
   border-radius: 8px;

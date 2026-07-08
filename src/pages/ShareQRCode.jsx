@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import QRCode from 'qrcode.react'
 import '../styles/ShareQRCode.css'
 
-function ShareQRCode({ user }) {
+function ShareQRCode({ user, onLogout }) {
   const navigate = useNavigate()
   const liffUrl = 'https://liff.line.me/2010635214-xOPFLeJc'
 
@@ -22,18 +22,28 @@ function ShareQRCode({ user }) {
     alert('LIFF URL copied to clipboard!')
   }
 
+  const handleLogout = () => {
+    onLogout()
+  }
+
   return (
     <div className="app">
       <div className="header">
-        <div className="header-with-back">
-          <button className="back-button" onClick={() => navigate('/menu')}>
-            ←
-          </button>
-          <div>Add to LINE Channel</div>
+        <div className="header-content">
+          <div className="header-title">📤 Share & Invite</div>
+          <div className="header-user-info">
+            <div className="user-details">
+              <div className="user-name">{user.userName}</div>
+              <div className="user-id">ID: {user.userId}</div>
+            </div>
+            <button className="btn-logout" onClick={handleLogout} title="Logout">
+              🚪
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="qr-share-container">
+      <div className="qr-share-container content-with-bottom-nav">
         <div className="qr-section">
           <h2>Scan to Add to LINE</h2>
           <p>Users can scan this QR code to add your app to their LINE channel</p>

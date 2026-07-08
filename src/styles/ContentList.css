@@ -3,6 +3,11 @@
   min-height: calc(100vh - 60px);
 }
 
+.content-with-bottom-nav {
+  padding-bottom: 80px;
+  min-height: calc(100vh - 60px);
+}
+
 .loading {
   display: flex;
   flex-direction: column;
