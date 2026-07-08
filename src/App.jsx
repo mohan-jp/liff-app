@@ -7,6 +7,24 @@ import BottomNavigation from './components/BottomNavigation'
 import './App.css'
 
 function NotAuthorized() {
+  const [liffStatus, setLiffStatus] = useState('Checking...')
+  const [userAgent, setUserAgent] = useState('')
+
+  useEffect(() => {
+    setUserAgent(navigator.userAgent)
+    
+    // Check LIFF status
+    try {
+      if (typeof window !== 'undefined' && window.liff) {
+        setLiffStatus('LIFF SDK available')
+      } else {
+        setLiffStatus('❌ LIFF SDK NOT available - Not accessed via LINE')
+      }
+    } catch (error) {
+      setLiffStatus('❌ Error checking LIFF: ' + error.message)
+    }
+  }, [])
+
   return (
     <div style={{ 
       display: 'flex', 
@@ -27,6 +45,18 @@ function NotAuthorized() {
         <p style={{ color: '#999', fontSize: '14px', marginTop: '30px' }}>
           🔗 LIFF URL: https://liff.line.me/2010635214-xOPFLeJc
         </p>
+        <div style={{ marginTop: '30px', padding: '15px', background: '#fff', borderRadius: '8px', textAlign: 'left', fontSize: '12px', color: '#666' }}>
+          <p><strong>Debug Info:</strong></p>
+          <p>Status: {liffStatus}</p>
+          <p>Platform: {userAgent.includes('iPhone') ? 'iOS' : userAgent.includes('Android') ? 'Android' : 'Desktop'}</p>
+          <p style={{ color: '#f44336', marginTop: '10px' }}>
+            <strong>If you're seeing this in LINE:</strong><br/>
+            1. Check DevTools (F12) Console for error messages<br/>
+            2. Make sure LIFF ID is correct<br/>
+            3. Try unfriend and refriend the bot<br/>
+            4. Clear browser cache
+          </p>
+        </div>
       </div>
     </div>
   )
@@ -44,10 +74,15 @@ function App() {
     // Initialize LIFF if available
     try {
       if (typeof window !== 'undefined' && window.liff) {
+        console.log('LIFF SDK found')
         try {
+          console.log('Initializing LIFF with ID: 2010635214-xOPFLeJc')
           await window.liff.init({ liffId: '2010635214-xOPFLeJc' })
+          console.log('LIFF initialized successfully')
+          console.log('Is LIFF logged in:', window.liff.isLoggedIn())
           
           if (window.liff.isLoggedIn()) {
+            console.log('User is logged in via LIFF')
             const profile = await window.liff.getProfile()
             console.log('LIFF Profile Data:', profile)
             console.log('Display Name from LIFF:', profile.displayName)
@@ -64,25 +99,27 @@ function App() {
             // Always overwrite with fresh data from LIFF
             localStorage.setItem('user', JSON.stringify(userData))
           } else {
-            console.log('User not logged in via LIFF')
+            console.log('User not logged in via LIFF - showing NotAuthorized')
             // User not logged in via LIFF, clear any old data
             localStorage.removeItem('user')
             setUser(null)
           }
         } catch (error) {
-          console.error('LIFF init error:', error.message)
+          console.error('LIFF init error:', error)
+          console.error('Error message:', error.message)
+          console.error('Error stack:', error.stack)
           // Even in error, clear old cached data to prevent stale data
           localStorage.removeItem('user')
           setUser(null)
         }
       } else {
-        console.log('LIFF not available')
+        console.log('LIFF SDK not found in window')
         // LIFF not available, clear cached data
         localStorage.removeItem('user')
         setUser(null)
       }
     } catch (error) {
-      console.error('LIFF initialization failed:', error)
+      console.error('Outer LIFF initialization failed:', error)
       // Clear old data on any error
       localStorage.removeItem('user')
       setUser(null)
@@ -90,6 +127,7 @@ function App() {
     
     // Ensure loading ends even if there are errors
     setTimeout(() => {
+      console.log('Loading complete. User state:', user ? 'Logged in' : 'Not logged in')
       setLoading(false)
     }, 100)
   }
