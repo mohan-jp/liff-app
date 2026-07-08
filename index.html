@@ -6,18 +6,52 @@
   <title>Line LIFF App</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    // Log when LIFF SDK loads
-    console.log('index.html loaded');
-    console.log('window.liff available:', typeof window.liff !== 'undefined');
+    // LIFF SDK Detection and Fallback
+    window.liffReady = false;
     
-    // Add timeout fallback in case SDK fails to load
+    console.log('=== index.html LIFF Detection Started ===');
+    console.log('URL:', window.location.href);
+    console.log('User Agent:', navigator.userAgent);
+    console.log('window.liff on page load:', typeof window.liff);
+    
+    // Method 1: Wait for LINE's automatic SDK injection (happens when opened via LIFF URL in LINE)
+    window.addEventListener('liff.ready', () => {
+      console.log('✓ LIFF ready event fired');
+      window.liffReady = true;
+    });
+    
+    // Method 2: Poll for window.liff availability
+    let liffCheckCount = 0;
+    const liffPollInterval = setInterval(() => {
+      liffCheckCount++;
+      if (typeof window.liff !== 'undefined') {
+        console.log('✓ window.liff found after ' + liffCheckCount + ' checks');
+        window.liffReady = true;
+        clearInterval(liffPollInterval);
+      } else if (liffCheckCount > 50) {
+        console.warn('✗ window.liff not found after 50 checks (5 seconds)');
+        clearInterval(liffPollInterval);
+      }
+    }, 100);
+    
+    // Method 3: Fallback - load SDK if not injected by LINE
     setTimeout(() => {
       if (typeof window.liff === 'undefined') {
-        console.warn('LIFF SDK did not load from CDN');
-      } else {
-        console.log('LIFF SDK loaded successfully');
+        console.warn('LIFF SDK not injected by LINE - attempting manual load');
+        const script = document.createElement('script');
+        script.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+        script.onload = () => {
+          console.log('✓ LIFF SDK loaded via fallback');
+          window.liffReady = true;
+        };
+        script.onerror = () => {
+          console.error('✗ Failed to load LIFF SDK');
+        };
+        document.head.appendChild(script);
       }
-    }, 2000);
+    }, 3000);
+    
+    console.log('=== index.html LIFF Detection Ready ===');
   </script>
   <style>
     * {

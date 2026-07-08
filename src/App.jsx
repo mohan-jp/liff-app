@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom'
 import LecturesList from './pages/LecturesList'
 import SeminarsList from './pages/SeminarsList'
 import HandsOnList from './pages/HandsOnList'
@@ -79,25 +79,36 @@ function NotAuthorized() {
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [targetPage, setTargetPage] = useState(null)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
+    // Get the page parameter from URL (?page=lectures, etc)
+    const pageParam = searchParams.get('page')
+    console.log('Page parameter from URL:', pageParam)
+    setTargetPage(pageParam || 'lectures') // Default to lectures
+    
     initApp()
   }, [])
 
   const initApp = async () => {
-    console.log('initApp started')
+    console.log('=== App.jsx initApp started ===')
     console.log('window.liff on start:', typeof window.liff)
-    console.log('window object keys containing liff:', Object.keys(window).filter(k => k.toLowerCase().includes('liff')))
+    console.log('window.liffReady:', window.liffReady)
+    console.log('User Agent:', navigator.userAgent)
+    console.log('Is in LINE app:', navigator.userAgent.includes('Line'))
     
-    // Wait for LIFF SDK to load
+    // Wait for LIFF SDK to load (up to 10 seconds with multiple strategies)
     let retries = 0
-    while (typeof window.liff === 'undefined' && retries < 30) {
-      console.log('Waiting for LIFF SDK to load... (attempt ' + (retries + 1) + '/30)')
+    const maxRetries = 100 // 10 seconds at 100ms intervals
+    
+    while (typeof window.liff === 'undefined' && retries < maxRetries) {
+      console.log('Waiting for LIFF... (' + (retries + 1) + '/' + maxRetries + ', ' + ((retries + 1) * 100) + 'ms)')
       await new Promise(resolve => setTimeout(resolve, 100))
       retries++
     }
 
-    console.log('After waiting: window.liff is', typeof window.liff)
+    console.log('After ' + retries + ' retries: window.liff is', typeof window.liff)
     
     // Initialize LIFF if available
     try {
@@ -171,18 +182,39 @@ function App() {
     )
   }
 
+  // Map page parameter to route
+  const getRedirectPath = () => {
+    if (!user) return '/'
+    switch(targetPage) {
+      case 'lectures':
+        return '/lectures'
+      case 'seminars':
+        return '/seminars'
+      case 'hands-on':
+        return '/hands-on'
+      default:
+        return '/lectures'
+    }
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={user ? <Navigate to={getRedirectPath()} /> : <NotAuthorized />} />
+      <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
+      <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
+      <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
+      <Route path="*" element={<Navigate to="/" />} />
+      {user && <BottomNavigation />}
+    </Routes>
+  )
+}
+
+function AppWrapper() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={user ? <Navigate to="/lectures" /> : <NotAuthorized />} />
-        <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
-        <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
-        <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-      {user && <BottomNavigation />}
+      <App />
     </Router>
   )
 }
 
-export default App
+export default AppWrapper
