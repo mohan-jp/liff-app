@@ -49,8 +49,10 @@ function App() {
           
           if (window.liff.isLoggedIn()) {
             const profile = await window.liff.getProfile()
-            console.log('LIFF logged in as:', profile.displayName)
-            // Use LIFF profile data
+            console.log('LIFF Profile Data:', profile)
+            console.log('Display Name from LIFF:', profile.displayName)
+            console.log('User ID from LIFF:', profile.userId)
+            // Use LIFF profile data - ALWAYS fetch fresh from LIFF
             const userData = {
               userId: profile.userId,
               userName: profile.displayName,
@@ -59,54 +61,31 @@ function App() {
               registeredAt: new Date().toISOString(),
             }
             setUser(userData)
+            // Always overwrite with fresh data from LIFF
             localStorage.setItem('user', JSON.stringify(userData))
           } else {
-            // User not logged in via LIFF, check localStorage
-            try {
-              const storedUser = localStorage.getItem('user')
-              if (storedUser) {
-                setUser(JSON.parse(storedUser))
-              }
-            } catch (error) {
-              console.warn('localStorage error:', error)
-              localStorage.removeItem('user')
-            }
+            console.log('User not logged in via LIFF')
+            // User not logged in via LIFF, clear any old data
+            localStorage.removeItem('user')
+            setUser(null)
           }
         } catch (error) {
-          console.warn('LIFF init failed - development mode OK:', error.message)
-          // Fallback to localStorage
-          try {
-            const storedUser = localStorage.getItem('user')
-            if (storedUser) {
-              setUser(JSON.parse(storedUser))
-            }
-          } catch (err) {
-            console.warn('localStorage error:', err)
-          }
+          console.error('LIFF init error:', error.message)
+          // Even in error, clear old cached data to prevent stale data
+          localStorage.removeItem('user')
+          setUser(null)
         }
       } else {
-        // LIFF not available, use localStorage
-        try {
-          const storedUser = localStorage.getItem('user')
-          if (storedUser) {
-            setUser(JSON.parse(storedUser))
-          }
-        } catch (error) {
-          console.warn('localStorage error:', error)
-          localStorage.removeItem('user')
-        }
+        console.log('LIFF not available')
+        // LIFF not available, clear cached data
+        localStorage.removeItem('user')
+        setUser(null)
       }
     } catch (error) {
-      console.warn('LIFF not available:', error)
-      // Fallback to localStorage
-      try {
-        const storedUser = localStorage.getItem('user')
-        if (storedUser) {
-          setUser(JSON.parse(storedUser))
-        }
-      } catch (err) {
-        console.warn('localStorage error:', err)
-      }
+      console.error('LIFF initialization failed:', error)
+      // Clear old data on any error
+      localStorage.removeItem('user')
+      setUser(null)
     }
     
     // Ensure loading ends even if there are errors
