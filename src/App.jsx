@@ -71,10 +71,18 @@ function App() {
   }, [])
 
   const initApp = async () => {
+    // Wait for LIFF SDK to load
+    let retries = 0
+    while (typeof window.liff === 'undefined' && retries < 20) {
+      console.log('Waiting for LIFF SDK to load... (attempt ' + (retries + 1) + ')')
+      await new Promise(resolve => setTimeout(resolve, 100))
+      retries++
+    }
+
     // Initialize LIFF if available
     try {
       if (typeof window !== 'undefined' && window.liff) {
-        console.log('LIFF SDK found')
+        console.log('LIFF SDK found after ' + retries + ' attempts')
         try {
           console.log('Initializing LIFF with ID: 2010635214-xOPFLeJc')
           await window.liff.init({ liffId: '2010635214-xOPFLeJc' })
@@ -113,7 +121,7 @@ function App() {
           setUser(null)
         }
       } else {
-        console.log('LIFF SDK not found in window')
+        console.log('LIFF SDK not found even after waiting - not in LINE app')
         // LIFF not available, clear cached data
         localStorage.removeItem('user')
         setUser(null)
