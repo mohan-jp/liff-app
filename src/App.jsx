@@ -1,12 +1,37 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import QRRegistration from './pages/QRRegistration'
 import LecturesList from './pages/LecturesList'
 import SeminarsList from './pages/SeminarsList'
 import HandsOnList from './pages/HandsOnList'
 import ShareQRCode from './pages/ShareQRCode'
 import BottomNavigation from './components/BottomNavigation'
 import './App.css'
+
+function NotAuthorized() {
+  return (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh', 
+      flexDirection: 'column',
+      textAlign: 'center',
+      padding: '20px',
+      background: '#f5f5f5'
+    }}>
+      <div style={{ maxWidth: '400px' }}>
+        <h1 style={{ fontSize: '48px', margin: '20px 0' }}>📱</h1>
+        <h2 style={{ color: '#333', marginBottom: '15px' }}>Access via LINE</h2>
+        <p style={{ color: '#666', fontSize: '16px', lineHeight: '1.6' }}>
+          This app is designed to be accessed through LINE. Please scan the QR code or click the link in LINE to access the app.
+        </p>
+        <p style={{ color: '#999', fontSize: '14px', marginTop: '30px' }}>
+          🔗 LIFF URL: https://liff.line.me/2010635214-xOPFLeJc
+        </p>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   const [user, setUser] = useState(null)
@@ -91,11 +116,6 @@ function App() {
     }, 100)
   }
 
-  const handleRegistration = (userData) => {
-    setUser(userData)
-    localStorage.setItem('user', JSON.stringify(userData))
-  }
-
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f5f5f5' }}>
@@ -107,7 +127,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/lectures" /> : <QRRegistration onRegister={handleRegistration} />} />
+        <Route path="/" element={user ? <Navigate to="/lectures" /> : <NotAuthorized />} />
         <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
         <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
         <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
