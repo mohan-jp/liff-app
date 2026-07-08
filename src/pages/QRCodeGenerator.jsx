@@ -56,14 +56,14 @@ const QRCodeGenerator = () => {
   ]
 
   const generateQRUrl = (category) => {
-    return `https://liff.line.me/${LIFF_ID}?category=${category.toLowerCase()}`
+    return `https://liff.line.me/${LIFF_ID}?category=${category.name.toLowerCase()}`
   }
 
-  const downloadQRCode = (category) => {
-    const qrElement = document.getElementById(`qr-${category.toLowerCase()}`)
+  const downloadQRCode = (categoryName) => {
+    const qrElement = document.getElementById(`qr-${categoryName.toLowerCase()}`)
     const canvas = qrElement.querySelector('canvas')
     const link = document.createElement('a')
-    link.download = `${category}-qr-code.png`
+    link.download = `${categoryName}-qr-code.png`
     link.href = canvas.toDataURL('image/png')
     link.click()
   }

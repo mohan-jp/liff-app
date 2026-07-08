@@ -4,6 +4,7 @@ import LecturesList from './pages/LecturesList'
 import SeminarsList from './pages/SeminarsList'
 import HandsOnList from './pages/HandsOnList'
 import QRCodeGenerator from './pages/QRCodeGenerator'
+import FirstTimeSetup from './pages/FirstTimeSetup'
 import BottomNavigation from './components/BottomNavigation'
 import './App.css'
 
@@ -80,6 +81,9 @@ function NotAuthorized() {
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [setupComplete, setSetupComplete] = useState(() => {
+    return localStorage.getItem('setupComplete') === 'true'
+  })
   const [targetPage, setTargetPage] = useState(null)
   const [searchParams] = useSearchParams()
 
@@ -209,13 +213,13 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={user ? <Navigate to={getRedirectPath()} /> : <NotAuthorized />} />
-        <Route path="/lectures" element={user ? <LecturesList user={user} /> : <Navigate to="/" />} />
-        <Route path="/seminars" element={user ? <SeminarsList user={user} /> : <Navigate to="/" />} />
-        <Route path="/hands-on" element={user ? <HandsOnList user={user} /> : <Navigate to="/" />} />
+        <Route path="/lectures" element={user && setupComplete ? <LecturesList user={user} /> : user && !setupComplete ? <FirstTimeSetup category={user.category} onSetupComplete={() => setSetupComplete(true)} /> : <Navigate to="/" />} />
+        <Route path="/seminars" element={user && setupComplete ? <SeminarsList user={user} /> : user && !setupComplete ? <FirstTimeSetup category={user.category} onSetupComplete={() => setSetupComplete(true)} /> : <Navigate to="/" />} />
+        <Route path="/hands-on" element={user && setupComplete ? <HandsOnList user={user} /> : user && !setupComplete ? <FirstTimeSetup category={user.category} onSetupComplete={() => setSetupComplete(true)} /> : <Navigate to="/" />} />
         <Route path="/qr-generator" element={<QRCodeGenerator />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      {user && <BottomNavigation user={user} />}
+      {user && setupComplete && <BottomNavigation user={user} />}
     </>
   )
 }
